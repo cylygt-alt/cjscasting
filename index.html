@@ -554,11 +554,11 @@
                 <form id="loginForm">
                     <div class="form-group">
                         <label for="username">USERNAME</label>
-                        <input type="text" id="username" placeholder="ENTER USERNAME" value="CJ253" required>
+                        <input type="text" id="username" placeholder="ENTER USERNAME" required>
                     </div>
                     <div class="form-group">
                         <label for="password">PASSWORD</label>
-                        <input type="password" id="password" placeholder="ENTER PASSWORD" value="GymKing25" required>
+                        <input type="password" id="password" placeholder="ENTER PASSWORD" required>
                     </div>
                     <button type="submit" class="btn">CONNECT</button>
                     <div id="loginError" class="error-message"></div>
@@ -700,9 +700,6 @@
             terminalInterface.classList.remove('active');
             loginScreen.style.display = 'flex';
             loginForm.reset();
-            // Refill the credentials
-            document.getElementById('username').value = 'CJ253';
-            document.getElementById('password').value = 'GymKing25';
             loginError.textContent = '';
             if (playfabMonitoringInterval) {
                 clearInterval(playfabMonitoringInterval);
