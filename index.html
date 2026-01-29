@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME TERMINAL // ACCESS POINT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hot-pink: #ff006e;
+            --pink-glow: #ff0080;
+            --deep-black: #0a0a0a;
+            --off-black: #1a1a1a;
+            --dark-gray: #2a2a2a;
+            --pink-shadow: 0 0 20px rgba(255, 0, 110, 0.5);
+            --pink-shadow-intense: 0 0 30px rgba(255, 0, 110, 0.8), 0 0 60px rgba(255, 0, 110, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--deep-black);
+            color: var(--hot-pink);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 0, 110, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 110, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridScroll 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* Scanline effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(255, 0, 110, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 2px solid var(--hot-pink);
+            box-shadow: var(--pink-shadow);
+            margin-bottom: 40px;
+            animation: headerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { box-shadow: 0 2px 0 var(--hot-pink), var(--pink-shadow); }
+            50% { box-shadow: 0 2px 0 var(--hot-pink), var(--pink-shadow-intense); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-shadow: var(--pink-shadow-intense);
+            margin-bottom: 10px;
+            animation: flicker 5s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            41%, 43%, 45% { opacity: 0.8; }
+            42%, 44% { opacity: 1; }
+        }
+
+        .tagline {
+            font-size: 0.9em;
+            opacity: 0.7;
+            letter-spacing: 3px;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+
+        .login-box {
+            background: var(--off-black);
+            border: 2px solid var(--hot-pink);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--pink-shadow-intense);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--hot-pink), transparent, var(--hot-pink));
+            z-index: -1;
+            opacity: 0.3;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            letter-spacing: 2px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: var(--deep-black);
+            border: 1px solid var(--hot-pink);
+            color: var(--hot-pink);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: var(--pink-shadow);
+            border-color: var(--pink-glow);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 0, 110, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--hot-pink);
+            color: var(--deep-black);
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            box-shadow: var(--pink-shadow-intense);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Main Terminal Interface */
+        .terminal-interface {
+            display: none;
+        }
+
+        .terminal-interface.active {
+            display: block;
+        }
+
+        .terminal-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--hot-pink);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: 1px solid var(--hot-pink);
+            color: var(--hot-pink);
+            font-family: 'Share Tech Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            background: var(--hot-pink);
+            color: var(--deep-black);
+            box-shadow: var(--pink-shadow);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(255, 0, 110, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Room Logs */
+        .logs-container {
+            background: var(--off-black);
+            border: 2px solid var(--hot-pink);
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(255, 0, 110, 0.1);
+        }
+
+        .logs-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .logs-container::-webkit-scrollbar-track {
+            background: var(--deep-black);
+            border: 1px solid var(--hot-pink);
+        }
+
+        .logs-container::-webkit-scrollbar-thumb {
+            background: var(--hot-pink);
+            box-shadow: var(--pink-shadow);
+        }
+
+        .log-entry {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--hot-pink);
+            background: rgba(255, 0, 110, 0.05);
+            animation: logAppear 0.3s;
+        }
+
+        @keyframes logAppear {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0);
+            }
+        }
+
+        .log-timestamp {
+            color: rgba(255, 0, 110, 0.6);
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .log-message {
+            line-height: 1.6;
+        }
+
+        .webhook-controls {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--off-black);
+            border: 1px solid var(--hot-pink);
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--off-black);
+            border: 2px solid var(--hot-pink);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--pink-shadow-intense);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            font-weight: 900;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            letter-spacing: 2px;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--hot-pink);
+            color: var(--hot-pink);
+            font-family: 'Share Tech Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .logout-btn:hover {
+            background: var(--hot-pink);
+            color: var(--deep-black);
+        }
+
+        .error-message {
+            color: var(--hot-pink);
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        /* Announcement Creator */
+        .announcement-creator {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: var(--off-black);
+            color: var(--hot-pink);
+        }
+
+        .announcement-preview {
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--off-black);
+            border: 2px solid var(--hot-pink);
+            box-shadow: var(--pink-shadow);
+        }
+
+        .preview-card {
+            background: linear-gradient(135deg, var(--deep-black) 0%, var(--off-black) 100%);
+            border-left: 4px solid var(--hot-pink);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(255, 0, 110, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+
+        .preview-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--hot-pink);
+            text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+        }
+
+        .preview-type {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.8;
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 0, 110, 0.1);
+            border: 1px solid var(--hot-pink);
+        }
+
+        .preview-message {
+            line-height: 1.8;
+            margin: 20px 0;
+            font-size: 1em;
+            white-space: pre-wrap;
+        }
+
+        .preview-footer {
+            font-size: 0.8em;
+            opacity: 0.6;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 0, 110, 0.3);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, var(--hot-pink) 0%, #ff0080 100%);
+            font-size: 1.2em;
+            padding: 18px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-send::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-send:hover::after {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-send span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .send-status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1em;
+            min-height: 30px;
+        }
+
+        .send-status.success {
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .send-status.error {
+            color: #ff0044;
+            text-shadow: 0 0 10px rgba(255, 0, 68, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-box">
+                <h2>ACCESS TERMINAL</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">USERNAME</label>
+                        <input type="text" id="username" placeholder="ENTER USERNAME" value="CJ253" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">PASSWORD</label>
+                        <input type="password" id="password" placeholder="ENTER PASSWORD" value="GymKing25" required>
+                    </div>
+                    <button type="submit" class="btn">CONNECT</button>
+                    <div id="loginError" class="error-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Terminal Interface -->
+        <div id="terminalInterface" class="terminal-interface">
+            <button class="logout-btn" id="logoutBtn">DISCONNECT</button>
+            
+            <header>
+                <h1>GAME TERMINAL</h1>
+                <p class="tagline">OPERATIONAL // PLAYFAB CONNECTED</p>
+            </header>
+
+            <nav class="terminal-nav">
+                <button class="tab-btn active" data-tab="dashboard">DASHBOARD</button>
+                <button class="tab-btn" data-tab="logs">ROOM LOGS</button>
+                <button class="tab-btn" data-tab="announcements">ANNOUNCEMENTS</button>
+            </nav>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">ACTIVE PLAYERS</div>
+                        <div class="stat-value" id="activePlayers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">ROOMS ACTIVE</div>
+                        <div class="stat-value" id="activeRooms">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">UPTIME</div>
+                        <div class="stat-value" id="uptime">00:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Logs Tab -->
+            <div id="logs" class="tab-content">
+                <h3 style="margin-bottom: 15px; font-family: 'Orbitron', sans-serif;">LIVE GAME ACTIVITY</h3>
+                <div class="logs-container" id="logsContainer">
+                    <div class="log-entry">
+                        <div class="log-timestamp">[SYSTEM] 2025-01-29 12:00:00</div>
+                        <div class="log-message">Terminal initialized. Monitoring game activity...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Announcements Tab -->
+            <div id="announcements" class="tab-content">
+                <div class="announcement-creator">
+                    <h3 style="margin-bottom: 20px; font-family: 'Orbitron', sans-serif;">CREATE ANNOUNCEMENT</h3>
+                    
+                    <div class="form-group">
+                        <label for="webhookUrl">DISCORD WEBHOOK URL</label>
+                        <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
+                        <button class="btn" id="saveWebhook" style="margin-top: 10px;">SAVE WEBHOOK</button>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <label for="announcementTitle">ANNOUNCEMENT TITLE</label>
+                        <input type="text" id="announcementTitle" placeholder="Enter announcement title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="announcementMessage">MESSAGE</label>
+                        <textarea id="announcementMessage" placeholder="Enter your announcement message..." rows="6"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="announcementType">ANNOUNCEMENT TYPE</label>
+                        <select id="announcementType">
+                            <option value="info">📢 Information</option>
+                            <option value="update">🔄 Update</option>
+                            <option value="event">🎉 Event</option>
+                            <option value="maintenance">🔧 Maintenance</option>
+                            <option value="warning">⚠️ Warning</option>
+                            <option value="critical">🚨 Critical</option>
+                        </select>
+                    </div>
+
+                    <div class="announcement-preview" id="announcementPreview">
+                        <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 15px;">PREVIEW</h4>
+                        <div class="preview-card">
+                            <div class="preview-title" id="previewTitle">Announcement Title</div>
+                            <div class="preview-type" id="previewType">📢 Information</div>
+                            <div class="preview-message" id="previewMessage">Your message will appear here...</div>
+                            <div class="preview-footer">Game Terminal • Now</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-send" id="sendAnnouncement">
+                        <span>SEND ANNOUNCEMENT</span>
+                    </button>
+
+                    <div id="sendStatus" class="send-status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PlayFab Configuration
+        let PLAYFAB_TITLE_ID = '15E87';
+        
+        // Login System
+        const loginScreen = document.getElementById('loginScreen');
+        const terminalInterface = document.getElementById('terminalInterface');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Hardcoded credentials
+        const validCredentials = {
+            username: 'CJ253',
+            password: 'GymKing25'
+        };
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === validCredentials.username && password === validCredentials.password) {
+                loginScreen.style.display = 'none';
+                terminalInterface.classList.add('active');
+                addLog(`User ${username} authenticated successfully`, 'SYSTEM');
+                startDashboard();
+                startPlayFabMonitoring();
+            } else {
+                loginError.textContent = 'ACCESS DENIED // INVALID CREDENTIALS';
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            terminalInterface.classList.remove('active');
+            loginScreen.style.display = 'flex';
+            loginForm.reset();
+            // Refill the credentials
+            document.getElementById('username').value = 'CJ253';
+            document.getElementById('password').value = 'GymKing25';
+            loginError.textContent = '';
+            if (playfabMonitoringInterval) {
+                clearInterval(playfabMonitoringInterval);
+            }
+        });
+
+        // Tab Navigation
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Webhook & Announcements
+        const webhookUrl = document.getElementById('webhookUrl');
+        const saveWebhook = document.getElementById('saveWebhook');
+        const logsContainer = document.getElementById('logsContainer');
+
+        // Pre-configured webhook URL
+        const defaultWebhook = 'https://discord.com/api/webhooks/1466538115534553110/5IUDKP1r5HODnFCNxUwtEgsnbqUspIP9nO3vwS-GHhSkLtvpUnOS-BKIFnlzngbkRFe6';
+        
+        // Load saved webhook from localStorage or use default
+        const savedWebhook = localStorage.getItem('discordWebhook') || defaultWebhook;
+        
+        webhookUrl.value = savedWebhook;
+        localStorage.setItem('discordWebhook', savedWebhook);
+
+        saveWebhook.addEventListener('click', () => {
+            const url = webhookUrl.value.trim();
+            if (url && url.includes('discord.com/api/webhooks/')) {
+                localStorage.setItem('discordWebhook', url);
+                addLog('Discord webhook saved successfully', 'SYSTEM');
+                
+                const statusDiv = document.getElementById('sendStatus');
+                statusDiv.textContent = '✓ Webhook saved successfully!';
+                statusDiv.className = 'send-status success';
+                setTimeout(() => {
+                    statusDiv.textContent = '';
+                    statusDiv.className = 'send-status';
+                }, 3000);
+            } else {
+                const statusDiv = document.getElementById('sendStatus');
+                statusDiv.textContent = '✗ Invalid webhook URL';
+                statusDiv.className = 'send-status error';
+            }
+        });
+
+        // Announcement Creator
+        const announcementTitle = document.getElementById('announcementTitle');
+        const announcementMessage = document.getElementById('announcementMessage');
+        const announcementType = document.getElementById('announcementType');
+        const sendAnnouncement = document.getElementById('sendAnnouncement');
+        const sendStatus = document.getElementById('sendStatus');
+
+        const previewTitle = document.getElementById('previewTitle');
+        const previewMessage = document.getElementById('previewMessage');
+        const previewType = document.getElementById('previewType');
+
+        // Color mapping for announcement types
+        const typeColors = {
+            'info': 3447003,      // Blue
+            'update': 3066993,    // Green
+            'event': 15844367,    // Gold
+            'maintenance': 10181046, // Purple
+            'warning': 15105570,  // Orange
+            'critical': 15158332  // Red
+        };
+
+        // Update preview in real-time
+        announcementTitle.addEventListener('input', () => {
+            previewTitle.textContent = announcementTitle.value || 'Announcement Title';
+        });
+
+        announcementMessage.addEventListener('input', () => {
+            previewMessage.textContent = announcementMessage.value || 'Your message will appear here...';
+        });
+
+        announcementType.addEventListener('change', () => {
+            const selectedOption = announcementType.options[announcementType.selectedIndex];
+            previewType.textContent = selectedOption.text;
+        });
+
+        // Send announcement to Discord
+        sendAnnouncement.addEventListener('click', async () => {
+            const webhook = localStorage.getItem('discordWebhook');
+            
+            if (!webhook) {
+                sendStatus.textContent = '✗ Please configure webhook URL first';
+                sendStatus.className = 'send-status error';
+                return;
+            }
+
+            const title = announcementTitle.value.trim();
+            const message = announcementMessage.value.trim();
+            const type = announcementType.value;
+
+            if (!title || !message) {
+                sendStatus.textContent = '✗ Please fill in both title and message';
+                sendStatus.className = 'send-status error';
+                return;
+            }
+
+            sendStatus.textContent = 'Sending announcement...';
+            sendStatus.className = 'send-status';
+
+            const payload = {
+                embeds: [{
+                    title: `${announcementType.options[announcementType.selectedIndex].text} ${title}`,
+                    description: message,
+                    color: typeColors[type],
+                    timestamp: new Date().toISOString(),
+                    footer: {
+                        text: "Game Terminal Announcement System"
+                    }
+                }]
+            };
+
+            try {
+                const response = await fetch(webhook, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    sendStatus.textContent = '✓ Announcement sent successfully!';
+                    sendStatus.className = 'send-status success';
+                    
+                    addLog(`Announcement sent: "${title}"`, 'ANNOUNCEMENT');
+                    
+                    // Clear form after 2 seconds
+                    setTimeout(() => {
+                        announcementTitle.value = '';
+                        announcementMessage.value = '';
+                        announcementType.value = 'info';
+                        previewTitle.textContent = 'Announcement Title';
+                        previewMessage.textContent = 'Your message will appear here...';
+                        previewType.textContent = '📢 Information';
+                        sendStatus.textContent = '';
+                        sendStatus.className = 'send-status';
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to send');
+                }
+            } catch (error) {
+                sendStatus.textContent = '✗ Failed to send announcement. Check webhook URL.';
+                sendStatus.className = 'send-status error';
+                console.error('Webhook error:', error);
+            }
+        });
+
+        // Dashboard with PlayFab Integration
+        let startTime;
+        let playfabMonitoringInterval;
+
+        function startDashboard() {
+            startTime = Date.now();
+            updateUptime();
+        }
+
+        function startPlayFabMonitoring() {
+            fetchPlayFabStats();
+            playfabMonitoringInterval = setInterval(() => {
+                fetchPlayFabStats();
+            }, 10000);
+        }
+
+        function fetchPlayFabStats() {
+            fetch(`https://${PLAYFAB_TITLE_ID}.playfabapi.com/Client/GetTitleData`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Keys: ["CurrentPlayerCount", "ActiveRooms"]
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.data && data.data.Data) {
+                    const playerCount = parseInt(data.data.Data.CurrentPlayerCount) || 0;
+                    const roomCount = parseInt(data.data.Data.ActiveRooms) || 0;
+                    
+                    document.getElementById('activePlayers').textContent = playerCount;
+                    document.getElementById('activeRooms').textContent = roomCount;
+                    
+                    if (playerCount > 0 || roomCount > 0) {
+                        addLog(`Stats updated - Players: ${playerCount}, Rooms: ${roomCount}`, 'PLAYFAB');
+                    }
+                }
+            })
+            .catch(err => {
+                console.log('PlayFab fetch (normal if Title Data not set):', err);
+                document.getElementById('activePlayers').textContent = '0';
+                document.getElementById('activeRooms').textContent = '0';
+            });
+        }
+
+        function updateUptime() {
+            setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                document.getElementById('uptime').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function addLog(message, type = 'INFO') {
+            const now = new Date();
+            const timestamp = now.toISOString().replace('T', ' ').substring(0, 19);
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <div class="log-timestamp">[${type}] ${timestamp}</div>
+                <div class="log-message">${message}</div>
+            `;
+            
+            logsContainer.insertBefore(logEntry, logsContainer.firstChild);
+            
+            while (logsContainer.children.length > 50) {
+                logsContainer.removeChild(logsContainer.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>
